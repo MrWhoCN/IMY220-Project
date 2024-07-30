@@ -1,2 +1,2 @@
 # IMY220-Project
-IMY220 project
+This is the IMY220 project ReadMe
