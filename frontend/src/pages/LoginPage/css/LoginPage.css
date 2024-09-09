@@ -1,0 +1,128 @@
+/* LoginPage.css */
+.loginContainer {
+    border-radius: 30px;
+    background-color: #fff;
+    padding: 0 0 0 80px;
+    overflow: hidden;
+}
+
+.contentWrapper {
+    display: flex;
+    gap: 20px;
+}
+
+/* Add other styles here */
+
+.formSection {
+    width: 37%;
+}
+
+.formContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.loginIllustration {
+    aspect-ratio: 3.77;
+    object-fit: contain;
+    width: 100%;
+}
+
+.formWrapper {
+    display: flex;
+    margin-right: 20px;
+    min-height: 416px;
+    align-items: flex-start;
+}
+
+.formInner {
+    border-radius: 0;
+    display: flex;
+    width: 404px;
+    padding-bottom: 8px;
+    flex-direction: column;
+}
+
+.welcomeTitle {
+    min-height: 53px;
+    color: #000;
+    font: 500 32px Poppins, sans-serif;
+    margin-bottom: 10px;
+}
+
+.loginInstruction {
+    color: #000;
+    margin-right: 34px;
+    font: 500 16px Poppins, sans-serif;
+    margin-bottom: 70px;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.signUpPrompt {
+    color: #000;
+    align-self: center;
+    margin-top: 29px;
+    font: 500 14px Poppins, sans-serif;
+}
+
+.signUpLink {
+    color: #0f3dde;
+    text-decoration: none;
+}
+
+.imageSection {
+    width: 63%;
+}
+
+.featureImage {
+    aspect-ratio: 0.78;
+    object-fit: contain;
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 991px) {
+    .loginContainer {
+        padding-left: 20px;
+    }
+
+    .contentWrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .formSection,
+    .imageSection {
+        width: 100%;
+    }
+
+    .formContent {
+        max-width: 100%;
+        margin-top: 40px;
+    }
+
+    .loginIllustration {
+        max-width: 100%;
+    }
+
+    .formWrapper {
+        margin-right: 10px;
+    }
+
+    .loginInstruction {
+        margin-right: 10px;
+    }
+
+    .featureImage {
+        max-width: 100%;
+        margin-top: 40px;
+    }
+}

@@ -1,0 +1,58 @@
+.profilePage {
+    border-radius: 30px;
+    background-color: #fff;
+    display: flex;
+    padding: 30px;
+    /* Changed layout */
+}
+
+.profileContent {
+    display: flex;
+    width: 100%;
+    /* Adjusted the width to accommodate the sidebar and content */
+}
+
+.sidebar {
+    flex-basis: 20%; /* Sidebar will take 20% of the space */
+    max-width: 20%;
+    padding-right: 20px; /* Added some spacing */
+}
+
+.mainContent {
+    flex-grow: 1; /* This allows the content to take the remaining space */
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 20px;
+}
+
+.decorativeImage {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 50px; /* Adjusted the size */
+    align-self: flex-start;
+    margin-top: 20px;
+}
+
+@media (max-width: 991px) {
+    .profileContent {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .sidebar {
+        width: 100%; /* Sidebar takes full width on small screens */
+        margin-bottom: 20px;
+    }
+
+    .mainContent {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .decorativeImage {
+        width: 40px;
+        margin-top: 20px;
+    }
+}

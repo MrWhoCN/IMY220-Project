@@ -1,0 +1,66 @@
+.playlistPage {
+    display: flex;
+    flex-direction: row;
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    flex-basis: 20%; /* Sidebar takes 20% of the width */
+    max-width: 20%;
+    padding-right: 20px;
+    box-sizing: border-box;
+}
+
+.mainContent {
+    flex-grow: 1; /* Main content takes the remaining space */
+    width: 80%; /* Ensures content takes up 80% of the available width */
+    margin-left: 20px;
+    padding-bottom: 51px;
+    box-sizing: border-box;
+}
+
+.searchBar {
+    padding: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.searchInput {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Gothic A1, sans-serif;
+    font-weight: 700;
+    color: #000;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.searchInput:focus {
+    background-color: #fff;
+    border-color: #161616;
+}
+
+@media (max-width: 991px) {
+    .playlistPage {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .mainContent {
+        width: 100%;
+        margin-left: 0;
+    }
+}

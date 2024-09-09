@@ -1,0 +1,13 @@
+.button {
+    border-radius: 10px;
+    background-color: #e5ae1f;
+    min-height: 32px;
+    width: 100%;
+    max-width: 404px;
+    color: #fff;
+    font: 700 13px Poppins, sans-serif;
+    border: 1px solid #e5ae1f;
+    cursor: pointer;
+    padding: 9px 0;
+    text-align: center;
+}

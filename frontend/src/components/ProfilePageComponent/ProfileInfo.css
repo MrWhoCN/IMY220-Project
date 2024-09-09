@@ -1,0 +1,60 @@
+.profileInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Poppins, sans-serif;
+    color: #000;
+}
+
+.profileHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    max-width: 300px;
+    width: 100%;
+}
+
+.avatarContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.avatar {
+    background-color: #d9d9d9;
+    border-radius: 50%;
+    width: 89px;
+    height: 88px;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.userName {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.userEmail {
+    font-weight: 400;
+    margin-top: 11px;
+}
+
+.stats {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.followers,
+.following {
+    margin: 5px 0;
+}
+
+
+@media (max-width: 991px) {
+    .profileInfo {
+        margin-top: 40px;
+    }
+}

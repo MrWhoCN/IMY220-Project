@@ -1,0 +1,19 @@
+.playlistSection {
+    width: 100%;
+}
+
+.playlistItems {
+    margin-bottom: 20px;
+}
+
+.decorativeImage {
+    width: 17px;
+    height: 34px;
+    align-self: flex-end;
+}
+
+@media (max-width: 991px) {
+    .decorativeImage {
+        margin-top: 40px;
+    }
+}
