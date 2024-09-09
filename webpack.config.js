@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './frontend/src/index.js',
@@ -39,6 +40,12 @@ module.exports = {
         compress: true,
         port: 9000,
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './frontend/public/index.html',  // Point to your index.html file
+        }),
+    ],
+
     resolve: {
         extensions: ['.js', '.jsx'],
     },
