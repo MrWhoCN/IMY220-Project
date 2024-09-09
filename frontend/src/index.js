@@ -8,7 +8,7 @@ import PlaylistPage from './pages/PlaylistPage/PlaylistPage';
 import ProfilePage  from "./pages/ProfilePage/ProfilePage";
 
 const container = document.getElementById('root');
-const root = createRoot(container);  // This is new in React 18
+const root = createRoot(container);  // This is new in React 19
 
 function App() {
     return (
