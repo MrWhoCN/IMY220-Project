@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
+import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const menuItems = [
@@ -8,34 +8,29 @@ const menuItems = [
     { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/a147527721f91dfa427e9277b4ebb7ff6a7e942f1b6c5b38354d4f75a311a626?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346", text: "Create Playlist", route: "#" }
 ];
 
-function Sidebar() {
+function Sidebar({ playlists = [], setPlaylists, addSongToPlaylist }) {  // Set a default empty array for playlists
     const [isModalOpen, setModalOpen] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
-    const [playlists, setPlaylists] = useState([]);
-    const navigate = useNavigate(); // Use useNavigate for navigation
+    const navigate = useNavigate();
 
-    // Function to toggle the modal
     const handleCreatePlaylistClick = () => {
         setModalOpen(!isModalOpen);
     };
 
-    // Function to handle the input change for playlist name
     const handlePlaylistNameChange = (e) => {
         setNewPlaylistName(e.target.value);
     };
 
-    // Function to confirm and create the playlist
     const handleConfirm = () => {
         if (newPlaylistName.trim()) {
-            setPlaylists([...playlists, { name: newPlaylistName, route: `/playlist/${newPlaylistName}` }]);
+            setPlaylists([...playlists, { name: newPlaylistName, route: `/playlist/${newPlaylistName}`, songs: [] }]);
             setNewPlaylistName('');
             setModalOpen(false);
         }
     };
 
-    // Function to navigate to the newly created playlist page
     const handlePlaylistClick = (route) => {
-        navigate(route); // Use navigate instead of history.push
+        navigate(route);
     };
 
     return (
@@ -57,11 +52,15 @@ function Sidebar() {
 
             <div className="playlistSection">
                 <h3>Playlists</h3>
-                {playlists.map((playlist, index) => (
-                    <div className="playlistItem" key={index} onClick={() => handlePlaylistClick(playlist.route)}>
-                        <a>{playlist.name}</a>
-                    </div>
-                ))}
+                {playlists.length > 0 ? (
+                    playlists.map((playlist, index) => (
+                        <div className="playlistItem" key={index} onClick={() => handlePlaylistClick(playlist.route)}>
+                            <a>{playlist.name}</a>
+                        </div>
+                    ))
+                ) : (
+                    <div>No playlists available</div>
+                )}
             </div>
 
             <footer className="footer">

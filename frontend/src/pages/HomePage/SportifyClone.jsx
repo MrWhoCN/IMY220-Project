@@ -4,7 +4,6 @@ import PlaylistSection from '../../components/HomePageComponent/PlaylistSection'
 import SearchBar from '../../components/HomePageComponent/SearchBar';
 import './css/SpotifyClone.css';
 
-// Combined playlists
 const combinedPlaylists = [
     { image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/37a90d50dc2c11f00aaaa4d08e32dcdeb27eab659834e00765a2e49a7eaf1fc2?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346', title: 'Peaceful Piano', description: 'Peaceful piano to help you slow down, breathe, and...' },
     { image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/2353c39dab6b6ce0b9be888d571a048e4045a1c494090f3a7b0ccde9919c566d?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346', title: 'Deep Focus', description: 'Keep calm and focus with ambient and post-rock music.' },
@@ -18,10 +17,11 @@ const combinedPlaylists = [
     { image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/7bcaa43a53580be109b30e697b7c44a56f1e8c9de47261cb7630ba92c1a39a73?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346', title: 'Chill Hits', description: 'Kick back to the best new and recent chill hits.' },
 ];
 
+
 function SpotifyClone() {
+    const [playlists, setPlaylists] = useState(combinedPlaylists);
     const [filteredPlaylists, setFilteredPlaylists] = useState(combinedPlaylists);
 
-    // Function to handle the search logic
     const handleSearch = (query) => {
         const filtered = combinedPlaylists.filter(playlist =>
             playlist.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -30,14 +30,21 @@ function SpotifyClone() {
         setFilteredPlaylists(filtered);
     };
 
+    const addSongToPlaylist = (playlistName, song) => {
+        const updatedPlaylists = playlists.map(playlist => {
+            if (playlist.title === playlistName) {
+                return { ...playlist, songs: [...playlist.songs, song] };
+            }
+            return playlist;
+        });
+        setPlaylists(updatedPlaylists);
+    };
+
     return (
         <div className="container">
-            <Sidebar /> {/* Keep the sidebar intact */}
+            <Sidebar playlists={playlists} setPlaylists={setPlaylists} addSongToPlaylist={addSongToPlaylist} />
             <main className="mainContent">
-                {/* Add the search bar */}
                 <SearchBar onSearch={handleSearch} />
-
-                {/* Use one PlaylistSection with a merged title and filtered playlists */}
                 <PlaylistSection title="Suggestion & Top Hits" subtitle="Focus & Top Charts" playlists={filteredPlaylists} />
             </main>
         </div>

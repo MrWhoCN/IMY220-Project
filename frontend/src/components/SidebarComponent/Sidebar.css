@@ -142,7 +142,7 @@
 
 /* Use the existing style for the "Create Playlist" button */
 .createPlaylistBtn {
-    background-color: #1db954;
+    background-color: #e5ae1f;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -185,13 +185,13 @@
     cursor: pointer;
     border-radius: 5px;
     border: none;
-    background-color: #1db954;
+    background-color: #e5ae1f;
     color: white;
     font-weight: bold;
 }
 
 .modalContent button:hover {
-    background-color: #1aa34a;
+    background-color: #e5ae1f;
 }
 
 .modalContent button:nth-child(2) {

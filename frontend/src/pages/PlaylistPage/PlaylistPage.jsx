@@ -15,7 +15,9 @@ const PlaylistPage = () => {
 
     return (
         <div className="playlistPage">
+            {/* Sidebar for navigation */}
             <Sidebar />
+
             <main className="mainContent">
                 {/* Search Bar */}
                 <div className="searchBar">
@@ -27,7 +29,8 @@ const PlaylistPage = () => {
                         className="searchInput"
                     />
                 </div>
-                {/* Pass search query to Playlist component */}
+
+                {/* Render Playlist component with search functionality */}
                 <Playlist searchQuery={searchQuery} playlistName={playlistName} />
             </main>
         </div>

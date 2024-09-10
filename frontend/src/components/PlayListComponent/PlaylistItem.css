@@ -1,7 +1,16 @@
+/* PlaylistItem styles */
+
 .playlistItem {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+}
+
+.playlistItem:hover {
+    background-color: #f5f5f5;
 }
 
 .itemColumn {
@@ -9,14 +18,11 @@
     align-items: center;
 }
 
-.itemColumn:first-child {
-    flex: 1;
-}
-
 .itemNumber {
     width: 30px;
     font-size: 14px;
     font-weight: 600;
+    margin-right: 15px;
 }
 
 .songInfo {
@@ -24,16 +30,9 @@
     align-items: center;
 }
 
-.albumCover {
+.albumCoverImage {
     width: 34px;
     height: 34px;
-    background-color: #d9d9d9;
-    margin-right: 15px;
-}
-
-.albumCoverImage {
-    width: 10%;
-    height: 10%;
     object-fit: cover;
     margin-right: 15px;
 }
@@ -62,13 +61,7 @@
 .durationControls {
     display: flex;
     align-items: center;
-}
-
-.likeButton {
-    width: 11px;
-    height: 10px;
-    border: 1px solid #000;
-    margin-right: 18px;
+    gap: 10px;
 }
 
 .duration {
@@ -77,56 +70,24 @@
     margin-right: 18px;
 }
 
-.moreOptions {
-    display: flex;
-    gap: 5px;
+/* Delete button styling */
+.deleteButton {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
 }
 
-.dot {
-    width: 3px;
-    height: 3px;
-    background-color: #000;
+.deleteButton:hover {
+    background-color: #c0392b;
 }
 
 @media (max-width: 991px) {
     .playlistItem {
         padding: 10px 20px;
-
     }
-}
-
-.deleteOption {
-    color: red;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 14px;
-    background-color: #f5f5f5;
-    padding: 5px;
-    border-radius: 4px;
-}
-
-.playlistItem {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.itemColumn {
-    display: flex;
-    align-items: center;
-}
-
-.moreOptions {
-    cursor: pointer;
-    position: relative;
-}
-
-.moreOptions .dot {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    background-color: #000;
-    border-radius: 50%;
-    margin: 0 2px;
 }

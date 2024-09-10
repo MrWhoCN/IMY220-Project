@@ -185,3 +185,34 @@
     background-color: #fff;
     border-color: #161616;
 }
+
+/* Add Button Styling */
+.addButton {
+    background-color: #e5ae1f; /* Spotify-like green color */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px; /* Rounded edges to match the search input */
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Space between button and playlist description */
+}
+
+.addButton:hover {
+    background-color: rgba(229, 174, 31, 0.77); /* Slightly lighter green on hover */
+}
+
+/* Message Styling */
+.message {
+    margin-top: 10px;
+    font-size: 12px; /* Smaller font size to keep it subtle */
+    color: #000; /* Black text for the message */
+    background-color: #e0e0e0; /* Light gray background for contrast */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow to make it stand out */
+    width: 100%;
+    text-align: center;
+}
