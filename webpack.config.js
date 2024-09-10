@@ -39,6 +39,7 @@ module.exports = {
         historyApiFallback: true,
         compress: true,
         port: 9000,
+        hot: true,  // Ensure HMR is enabled
     },
     plugins: [
         new HtmlWebpackPlugin({

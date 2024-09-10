@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';  // Import useParams
 import Sidebar from '../../components/SidebarComponent/Sidebar';
 import Playlist from '../../components/PlayListComponent/Playlist';
 import './css/PlaylistPage.css';
 
 const PlaylistPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { playlistName } = useParams();  // Access the playlist name from the route
 
     // Handle search input change
     const handleSearchChange = (e) => {
@@ -19,14 +21,14 @@ const PlaylistPage = () => {
                 <div className="searchBar">
                     <input
                         type="text"
-                        placeholder="Search songs..."
+                        placeholder={`Search songs in ${playlistName}...`}  // Use playlistName in the placeholder
                         value={searchQuery}
                         onChange={handleSearchChange}
                         className="searchInput"
                     />
                 </div>
                 {/* Pass search query to Playlist component */}
-                <Playlist searchQuery={searchQuery} />
+                <Playlist searchQuery={searchQuery} playlistName={playlistName} />
             </main>
         </div>
     );
