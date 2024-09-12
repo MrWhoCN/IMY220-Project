@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../pages/LoginPage/css/Button.css'; // Import the CSS file without assigning it to `styles`
+import './Button.css'; // Import the CSS file without assigning it to `styles`
 
 function Button({ children, type }) {
     return (

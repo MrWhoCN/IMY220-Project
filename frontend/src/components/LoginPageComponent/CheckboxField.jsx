@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../pages/LoginPage/css/CheckboxField.css'; // Import the CSS file without assigning to `styles`
+import './CheckboxField.css'; // Import the CSS file without assigning to `styles`
 
 function CheckboxField({ label }) {
     return (

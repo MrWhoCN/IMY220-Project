@@ -1,16 +1,20 @@
-import React from 'react';
-import '../../pages/LoginPage/css/InputField.css'; // Import the CSS file without using `styles`
+import React, { useState } from 'react';
+import './InputField.css';
 
-function InputField({ label, placeholder, type }) {
+function InputField({ label, placeholder, type = 'text', value, onChange, error }) {
     return (
-        <div className="inputWrapper"> {/* Use the class name as a string */}
+        <div className="inputWrapper">
             <label className="inputLabel">{label}</label>
             <input
                 type={type}
                 placeholder={placeholder}
-                className="inputField"
+                value={value}
+                onChange={onChange}
+                className={`inputField ${error ? 'inputError' : ''}`} // Add error class if validation fails
                 aria-label={label}
+                aria-invalid={error ? 'true' : 'false'} // Accessibility improvement
             />
+            {error && <span className="errorMessage">{error}</span>} {/* Display error message if present */}
         </div>
     );
 }
