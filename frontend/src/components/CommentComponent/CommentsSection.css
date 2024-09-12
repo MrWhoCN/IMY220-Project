@@ -1,0 +1,78 @@
+/* Style PlaylistItem based on your existing design */
+.commentSection {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f0f0f0; /* Light background for the comment section */
+    border-radius: 10px; /* Rounded edges to match the overall design */
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    font-family: 'Gothic A1', sans-serif; /* Ensure consistent typography */
+}
+
+.commentSection h3 {
+    font-size: 24px;
+    font-weight: 900;
+    color: #161616;
+    margin-bottom: 20px;
+}
+
+.commentInput {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.commentInput input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 25px; /* Rounded input field */
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for input */
+    font-size: 14px;
+    font-weight: 700;
+    color: #161616;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.commentInput input:focus {
+    background-color: #fff;
+    border-color: #161616; /* Darker border when focused */
+}
+
+.commentInput button {
+    background-color: #e5ae1f; /* Matching color with the addButton */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px; /* Rounded button edges */
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.commentInput button:hover {
+    background-color: rgba(229, 174, 31, 0.77); /* Lighter color on hover */
+}
+
+.commentsList {
+    margin-top: 20px;
+}
+
+.commentItem {
+    background-color: #e0e0e0;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow to make it stand out */
+    font-size: 14px;
+    font-weight: 600;
+    color: #161616;
+    margin-bottom: 10px; /* Space between comments */
+}
+
+.noCommentsMessage {
+    font-size: 16px;
+    color: #ff4c4c; /* Same as the noResultsMessage color */
+    text-align: center;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PlaylistHeader from './PlaylistHeader';
 import PlaylistItem from './PlaylistItem';
+import CommentsSection from '../CommentComponent/CommentSection';
 import './Playlist.css';
 
 const initialPlaylistData = [
@@ -43,11 +44,7 @@ const initialPlaylistData = [
 ];
 
 const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) => {
-    // Use initialPlaylistData if songs is empty
     const [playlistData, setPlaylistData] = useState(songs.length > 0 ? songs : initialPlaylistData);
-
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
 
     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
 
@@ -68,13 +65,6 @@ const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) 
         addSongToPlaylist(playlistName, newSong);
     };
 
-    const handleAddComment = () => {
-        if (newComment.trim()) {
-            setComments([...comments, newComment]);
-            setNewComment(''); // Clear input field after adding the comment
-        }
-    };
-
     return (
         <section className="playlistSection">
             <PlaylistHeader />
@@ -92,30 +82,7 @@ const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) 
                 )}
             </div>
 
-            {/* Comment Section */}
-            <div className="commentSection">
-                <h3>Comments</h3>
-                <div className="commentInput">
-                    <input
-                        type="text"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Leave a comment..."
-                    />
-                    <button onClick={handleAddComment}>Submit</button>
-                </div>
-                <div className="commentsList">
-                    {comments.length > 0 ? (
-                        comments.map((comment, index) => (
-                            <div key={index} className="commentItem">
-                                {comment}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="noCommentsMessage">No comments yet. Be the first to comment!</div>
-                    )}
-                </div>
-            </div>
+            <CommentsSection />
         </section>
     );
 };
