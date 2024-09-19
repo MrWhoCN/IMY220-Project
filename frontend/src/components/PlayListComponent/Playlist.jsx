@@ -1,53 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PlaylistHeader from './PlaylistHeader';
 import PlaylistItem from './PlaylistItem';
-import CommentsSection from '../CommentComponent/CommentSection';
+import CommentsSection from '../CommentComponent/CommentSection'; // 确保路径正确
 import './Playlist.css';
 
-const initialPlaylistData = [
-    {
-        number: 1,
-        title: "So Far So Good",
-        albumCover: "https://cdn.builder.io/api/v1/image/assets/TEMP/37a90d50dc2c11f00aaaa4d08e32dcdeb27eab659834e00765a2e49a7eaf1fc2?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346",
-        artist: "Sun Of They",
-        album: "Silent Hills",
-        dateAdded: "1 week ago",
-        duration: "2:31",
-    },
-    {
-        number: 2,
-        title: "Another Day",
-        albumCover: "https://cdn.builder.io/api/v1/image/assets/TEMP/37a90d50dc2c11f00aaaa4d08e32dcdeb27eab659834e00765a2e49a7eaf1fc2?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346",
-        artist: "Artist X",
-        album: "Dreamscape",
-        dateAdded: "2 weeks ago",
-        duration: "3:45",
-    },
-    {
-        number: 3,
-        title: "Lost in Time",
-        albumCover: "https://cdn.builder.io/api/v1/image/assets/TEMP/37a90d50dc2c11f00aaaa4d08e32dcdeb27eab659834e00765a2e49a7eaf1fc2?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346",
-        artist: "Unknown Artist",
-        album: "Infinity",
-        dateAdded: "3 days ago",
-        duration: "4:12",
-    },
-    {
-        number: 4,
-        title: "Journey",
-        albumCover: "https://cdn.builder.io/api/v1/image/assets/TEMP/37a90d50dc2c11f00aaaa4d08e32dcdeb27eab659834e00765a2e49a7eaf1fc2?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346",
-        artist: "Sun Of They",
-        album: "Silent Hills",
-        dateAdded: "1 week ago",
-        duration: "2:31",
-    },
-];
-
-const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) => {
-    const [playlistData, setPlaylistData] = useState(songs.length > 0 ? songs : initialPlaylistData);
+const Playlist = ({ playlistId, searchQuery, addSongToPlaylist }) => {
+    const [playlistData, setPlaylistData] = useState([]); // Initially empty
+    const [playlistName, setPlaylistName] = useState("Your Playlist");
+    const [isEditingName, setIsEditingName] = useState(false);
 
     const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : '';
 
+    // Filter playlist data based on search query
     const filteredPlaylistData = playlistData.filter(
         (song) =>
             song.title.toLowerCase().includes(normalizedSearchQuery) ||
@@ -55,26 +19,87 @@ const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) 
             song.album.toLowerCase().includes(normalizedSearchQuery)
     );
 
-    const handleDelete = (number) => {
-        const updatedPlaylist = playlistData.filter((song) => song.number !== number);
-        setPlaylistData(updatedPlaylist);
+    useEffect(() => {
+        const fetchPlaylist = async () => {
+            try {
+                const response = await fetch(`/playlists/${playlistId}/songs`);  // 使用 playlistId
+                if (!response.ok) {
+                    throw new Error('Failed to fetch playlist');
+                }
+                const data = await response.json();
+                setPlaylistData(data); // Assuming the response is an array of songs
+                setPlaylistName(data.name); // Assuming the playlist name is also in the response
+            } catch (error) {
+                console.error('Error fetching playlist:', error);
+            }
+        };
+
+        if (playlistId) {
+            fetchPlaylist();
+        }
+    }, [playlistId]);
+
+    const handleDelete = async (songId) => {
+        try {
+            // 发起 DELETE 请求到后端
+            const response = await fetch(`/playlists/${playlistId}/songs/${songId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete the song');
+            }
+
+            const updatedPlaylist = playlistData.filter((song) => song._id !== songId);  // 使用 song._id 而不是 number
+            setPlaylistData(updatedPlaylist);
+
+            console.log('Song deleted successfully');
+        } catch (error) {
+            console.error('Error deleting song:', error);
+        }
     };
 
-    const handleAddSong = (newSong) => {
-        setPlaylistData([...playlistData, newSong]);
-        addSongToPlaylist(playlistName, newSong);
+    const handleEditPlaylistName = () => {
+        setIsEditingName(true);
+    };
+
+    const handleNameChange = (e) => {
+        setPlaylistName(e.target.value);
+    };
+
+    const handleSaveName = () => {
+        setIsEditingName(false);
     };
 
     return (
         <section className="playlistSection">
+            <div className="playlistName">
+                {isEditingName ? (
+                    <div>
+                        <input
+                            type="text"
+                            value={playlistName}
+                            onChange={handleNameChange}
+                            className="playlistNameInput"
+                        />
+                        <button onClick={handleSaveName} className="saveButton">Save</button>
+                    </div>
+                ) : (
+                    <div>
+                        <h2>{playlistName}</h2>
+                        <button onClick={handleEditPlaylistName} className="editButton">Edit Name</button>
+                    </div>
+                )}
+            </div>
+
             <PlaylistHeader />
             <div className="playlistItems">
                 {filteredPlaylistData.length > 0 ? (
-                    filteredPlaylistData.map((item) => (
+                    filteredPlaylistData.map((item, index) => (
                         <PlaylistItem
-                            key={item.number}
+                            key={index}
                             {...item}
-                            onDelete={() => handleDelete(item.number)}
+                            onDelete={() => handleDelete(item._id)}
                         />
                     ))
                 ) : (
@@ -82,7 +107,8 @@ const Playlist = ({ searchQuery, songs = [], playlistName, addSongToPlaylist }) 
                 )}
             </div>
 
-            <CommentsSection />
+            {/* 传递 playlistId 到 CommentsSection */}
+            <CommentsSection playlistId={playlistId} />
         </section>
     );
 };

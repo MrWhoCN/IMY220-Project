@@ -6,10 +6,15 @@
     "dev": "webpack serve --mode development --config webpack.config.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
     "express": "^4.17.1",
     "html-webpack-plugin": "^5.6.0",
+    "js-cookie": "^3.0.5",
+    "mongoose": "^8.6.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.26.1"
   },
   "devDependencies": {

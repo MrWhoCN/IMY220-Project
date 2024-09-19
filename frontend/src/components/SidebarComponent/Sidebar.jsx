@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
+import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
 
 const menuItems = [
     { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/c002322ed9301fa05d1d2e2c260a5ab47acd322ef33c59df82aa3b0c71ce698c?placeholderIfAbsent=true&apiKey=109e5ef2921f4f19976eeca47438f346", text: "Home", route: "/home" },
@@ -13,6 +14,16 @@ function Sidebar({ playlists = [], setPlaylists, addSongToPlaylist }) {  // Set 
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const navigate = useNavigate();
 
+    const userId = Cookies.get('userId'); // Get userId from cookies
+
+    // Fetch playlists when the component mounts
+    useEffect(() => {
+        fetch('/playlists')
+            .then((response) => response.json())
+            .then((data) => setPlaylists(data))
+            .catch((error) => console.error('Error fetching playlists:', error));
+    }, [setPlaylists]);
+
     const handleCreatePlaylistClick = () => {
         setModalOpen(!isModalOpen);
     };
@@ -22,16 +33,29 @@ function Sidebar({ playlists = [], setPlaylists, addSongToPlaylist }) {  // Set 
     };
 
     const handleConfirm = () => {
-        if (newPlaylistName.trim()) {
-            setPlaylists([...playlists, { name: newPlaylistName, route: `/playlist/${newPlaylistName}`, songs: [] }]);
-            setNewPlaylistName('');
-            setModalOpen(false);
+        if (newPlaylistName.trim() && userId) {
+            fetch('/playlists', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: newPlaylistName, userId })
+            })
+                .then((response) => response.json())
+                .then((newPlaylist) => {
+                    // Update playlists state with the newly created playlist
+                    setPlaylists([...playlists, newPlaylist]);
+                    setNewPlaylistName('');
+                    setModalOpen(false);
+                })
+                .catch((error) => console.error('Error creating playlist:', error));
         }
     };
 
-    const handlePlaylistClick = (route) => {
-        navigate(route);
+    const handlePlaylistClick = (playlistId) => {
+        navigate(`/playlist/${playlistId}`);
     };
+
 
     return (
         <aside className="sidebar">
@@ -54,7 +78,7 @@ function Sidebar({ playlists = [], setPlaylists, addSongToPlaylist }) {  // Set 
                 <h3>Playlists</h3>
                 {playlists.length > 0 ? (
                     playlists.map((playlist, index) => (
-                        <div className="playlistItem" key={index} onClick={() => handlePlaylistClick(playlist.route)}>
+                        <div className="playlistItem" key={index}  onClick={() => handlePlaylistClick(playlist._id)}>
                             <a>{playlist.name}</a>
                         </div>
                     ))

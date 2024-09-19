@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';  // Import useParams
+import React, {useEffect, useState} from 'react';
+import { useParams } from 'react-router-dom';
 import Sidebar from '../../components/SidebarComponent/Sidebar';
 import Playlist from '../../components/PlayListComponent/Playlist';
 import './css/PlaylistPage.css';
+import Cookies from "js-cookie";
 
 const PlaylistPage = () => {
+    const [playlists, setPlaylists] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const { playlistName } = useParams();  // Access the playlist name from the route
+    const { playlistId } = useParams();  // 确保从 URL 参数中获取 playlistId
+    const userId = Cookies.get('userId'); // Get userId from cookies
 
+    // Fetch playlists when the component mounts
+    useEffect(() => {
+        if (userId) {
+            fetch(`/playlists?userId=${userId}`)
+                .then((response) => response.json())
+                .then((data) => setPlaylists(data))
+                .catch((error) => console.error('Error fetching playlists:', error));
+        }
+    }, [userId]);
     // Handle search input change
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -15,23 +27,19 @@ const PlaylistPage = () => {
 
     return (
         <div className="playlistPage">
-            {/* Sidebar for navigation */}
-            <Sidebar />
-
+            <Sidebar playlists={playlists} setPlaylists={setPlaylists} />
             <main className="mainContent">
-                {/* Search Bar */}
                 <div className="searchBar">
                     <input
                         type="text"
-                        placeholder={`Search songs in ${playlistName}...`}  // Use playlistName in the placeholder
+                        placeholder="Search songs..."
                         value={searchQuery}
                         onChange={handleSearchChange}
                         className="searchInput"
                     />
                 </div>
-
-                {/* Render Playlist component with search functionality */}
-                <Playlist searchQuery={searchQuery} playlistName={playlistName} />
+                {/* 传递 playlistId 到 Playlist 组件 */}
+                <Playlist searchQuery={searchQuery} playlistId={playlistId} />
             </main>
         </div>
     );

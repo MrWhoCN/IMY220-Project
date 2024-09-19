@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './css/LoginPage.css'; // Import the CSS directly without assigning to `styles`
+import {Link, useNavigate} from 'react-router-dom'; // For navigation
+import Cookies from 'js-cookie'; // For handling cookies
+import './css/LoginPage.css';
 import InputField from '../../components/LoginPageComponent/InputField';
 import Button from '../../components/LoginPageComponent/Button';
 import CheckboxField from '../../components/LoginPageComponent/CheckboxField';
@@ -12,6 +13,9 @@ function LoginPage() {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [formValid, setFormValid] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+
+    const navigate = useNavigate(); // React Router hook for navigation
 
     const validateEmail = (emailValue) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,11 +59,35 @@ function LoginPage() {
         }
     }, [emailError, passwordError, email, password]);
 
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (formValid) {
-            console.log("Form submitted with email:", email, "and password:", password);
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store the user ID in the cookie
+                    Cookies.set('userId', data._id, { expires: 30 }); // 30 days expiry
+                    Cookies.set('username', data.username, { expires: 30 }); // 30 days expiry
+                    // Redirect to /home
+                    navigate('/home');
+                } else {
+                    const errorMessage = await response.text();
+                    setSubmitError(errorMessage);
+                }
+            } catch (error) {
+                setSubmitError('An error occurred. Please try again.');
+            }
         }
     };
 
@@ -103,9 +131,11 @@ function LoginPage() {
 
                                     <CheckboxField label="Remember for 30 days" />
 
-                                    {/* Submit Button - Disabled if form is not valid */}
                                     <Button type="submit" disabled={!formValid}>Login</Button>
                                 </form>
+
+                                {submitError && <p className="errorText">{submitError}</p>}
+
                                 <p className="signUpPrompt">
                                     Don't have an account? <Link to="/signup" className="signUpLink">Sign Up</Link>
                                 </p>

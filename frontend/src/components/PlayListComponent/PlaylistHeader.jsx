@@ -3,7 +3,7 @@ import  './PlaylistHeader.css';
 
 const PlaylistHeader = () => (
     <header className="playlistHeader">
-        <h1 className="playlistTitle">Your Playlist</h1>
+        <h3 className="playlistTitle">Songs</h3>
         <div className="headerRow">
             <div className="headerColumn">
                 <span className="headerNumber">#</span>

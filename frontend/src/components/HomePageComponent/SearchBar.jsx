@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
 import './SearchBar.css'; // Add your CSS styles for the search bar here
 
-function SearchBar({ onSearch }) {
-    const [searchQuery, setSearchQuery] = useState('');
+const SearchBar = ({ onSearch }) => {
+    const [query, setQuery] = useState('');
 
-    const handleInputChange = (e) => {
-        setSearchQuery(e.target.value);
-        onSearch(e.target.value); // Call the onSearch function passed from the parent
+    const handleSearch = () => {
+        if (query.trim()) {
+            onSearch(query);  // 传递查询给父组件
+        }
     };
 
     return (
-        <div className="search-bar">
+        <div className="searchBar">
             <input
                 type="text"
                 placeholder="Search playlists..."
-                value={searchQuery}
-                onChange={handleInputChange}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 className="searchInput"
             />
+            <button onClick={handleSearch}>Search</button>
         </div>
     );
-}
+};
 
 export default SearchBar;

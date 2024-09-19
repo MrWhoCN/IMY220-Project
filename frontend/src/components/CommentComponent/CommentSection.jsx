@@ -1,14 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
 import './CommentsSection.css';
 
-const CommentsSection = () => {
+const CommentsSection = ({ playlistId }) => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const userId = Cookies.get('userId'); // 获取保存的 userId
 
-    const handleAddComment = () => {
-        if (newComment.trim()) {
-            setComments([...comments, newComment]);
-            setNewComment(''); // Clear input field after adding the comment
+    // Fetch comments when the component mounts
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const response = await fetch(`/playlists/${playlistId}/comments`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch comments');
+                }
+                const data = await response.json();
+                setComments(data); // Set comments data
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+            }
+        };
+
+        fetchComments();
+    }, [playlistId]);
+
+    const handleAddComment = async () => {
+        if (!newComment.trim()) return;
+
+        try {
+            const response = await fetch(`/playlists/${playlistId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, content: newComment }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add comment');
+            }
+
+            const newCommentData = await response.json();
+
+            // Update comments state to include the new comment
+            setComments([...comments, newCommentData]);
+            setNewComment(''); // Clear input field
+        } catch (error) {
+            console.error('Error adding comment:', error);
         }
     };
 
@@ -28,7 +67,7 @@ const CommentsSection = () => {
                 {comments.length > 0 ? (
                     comments.map((comment, index) => (
                         <div key={index} className="commentItem">
-                            {comment}
+                            <strong>{comment.userId.username}</strong>: {comment.content}
                         </div>
                     ))
                 ) : (

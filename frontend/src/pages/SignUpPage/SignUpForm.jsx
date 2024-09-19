@@ -18,6 +18,10 @@ function SignUpForm() {
     // State for form validity
     const [formValid, setFormValid] = useState(false);
 
+    // State for submission error or success message
+    const [submitError, setSubmitError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
     // Validation functions
     const validateName = (nameValue) => {
         if (!nameValue.trim()) {
@@ -77,11 +81,35 @@ function SignUpForm() {
     }, [nameError, emailError, passwordError, name, email, password]);
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (formValid) {
-            // Add your form submission logic here (e.g., call API)
-            console.log("Form submitted with Name:", name, "Email:", email, "Password:", password);
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: name,
+                        email: email,
+                        password: password,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    setSuccessMessage(data);
+                    setSubmitError('');
+                } else {
+                    const errorData = await response.text();
+                    setSubmitError(errorData);
+                    setSuccessMessage('');
+                }
+            } catch (error) {
+                setSubmitError('An error occurred. Please try again.');
+                setSuccessMessage('');
+            }
         }
     };
 
@@ -139,6 +167,9 @@ function SignUpForm() {
                                     {/* Submit Button */}
                                     <Button type="submit" disabled={!formValid}> Sign Up </Button>
                                 </form>
+                                {/* Show error or success message */}
+                                {submitError && <p className="errorText">{submitError}</p>}
+                                {successMessage && <p className="successText">{successMessage}</p>}
                             </div>
                         </div>
                     </div>
