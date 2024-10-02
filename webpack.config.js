@@ -16,8 +16,12 @@ module.exports = {
                 use: 'babel-loader',
             },
             {
-                test: /\.css$/,  // For regular CSS
-                use: ['style-loader', 'css-loader'], // Remove the "modules" option here
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'postcss-loader',  // Add this line to process Tailwind with PostCSS
+                ],
             },
             {
                 test: /\.(png|jpg|gif)$/,

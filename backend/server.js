@@ -148,6 +148,22 @@ app.get('/users/:userId', async (req, res) => {
     }
 });
 
+//display all users
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find()
+            .populate('followers', 'username')
+            .populate('following', 'username')
+            .populate({
+                path: 'playlists',
+                select: 'name image', // Select only necessary fields
+            });
+
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).send('Error fetching users.');
+    }
+});
 app.put('/users/:userId', async (req, res) => {
     const { userId } = req.params;
     const { username, email, password } = req.body;
@@ -186,6 +202,23 @@ app.delete('/users/:userId', async (req, res) => {
     } catch (error) {
         res.status(500).send('Error deleting user profile.');
     }
+});
+
+// Fetch a user's playlists
+app.get('/users/:userId/playlists', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const playlists = await Playlist.find({ userId }).populate('songs');
+        res.status(200).json(playlists);
+    } catch (error) {
+        res.status(500).send('Error fetching user playlists.');
+    }
+});
+
+//logout API
+app.post('/logout', async (req, res) => {
+    res.status(200).send('Logged out successfully.');
 });
 
 // Friend / Unfriend API Requests
@@ -461,7 +494,15 @@ app.get('/users/search', async (req, res) => {
     const { username } = req.query;
 
     try {
-        const users = await User.find({ username: { $regex: username, $options: 'i' } }).select('username email');
+        const users = await User.find({
+            username: { $regex: username, $options: 'i' },
+        })
+            .select('username email playlists')
+            .populate({
+                path: 'playlists',
+                select: 'name image',
+            });
+
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ error: 'Error searching users.' });

@@ -37,23 +37,29 @@ function ProfilePage() {
         }
     };
 
+    //logout function
+    const handleLogout = () => {
+        Cookies.remove('userId');
+        window.location.href = '/';
+    };
+
     if (!user) {
         return <div>Loading...</div>;
     }
 
+
+
     return (
         <main className="profilePage">
-            {/* Pass the playlists to Sidebar */}
             <Sidebar playlists={user.playlists} />
 
             <section className="mainContent">
-                {/* Pass user data to ProfileInfo and ProfileForm */}
                 <ProfileInfo user={user} />
                 <ProfileForm user={user} setUser={setUser} />
-
-                {/* Add a button to delete the profile */}
                 <button onClick={handleDeleteProfile} className="deleteProfileButton">
                     Delete Profile
+                </button>
+                <button onClick={handleLogout} className="logoutButton"> Logout
                 </button>
             </section>
 
