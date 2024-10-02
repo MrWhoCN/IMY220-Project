@@ -3,31 +3,58 @@ import Sidebar from '../../components/SidebarComponent/Sidebar';
 import ProfileInfo from '../../components/ProfilePageComponent/ProfileInfo';
 import ProfileForm from '../../components/ProfilePageComponent/ProfileForm';
 import './css/ProfilePage.css';
-import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
+import Cookies from 'js-cookie';
 
 function ProfilePage() {
-    const [playlists, setPlaylists] = useState([]); // State to store playlists
-
+    const [user, setUser] = useState(null); // State to store user data
     const userId = Cookies.get('userId'); // Get userId from cookies
 
-    // Fetch playlists when the component mounts
+    // Fetch user data when the component mounts
     useEffect(() => {
         if (userId) {
-            fetch(`/playlists?userId=${userId}`)
+            fetch(`/users/${userId}`)
                 .then((response) => response.json())
-                .then((data) => setPlaylists(data))
-                .catch((error) => console.error('Error fetching playlists:', error));
+                .then((data) => setUser(data))
+                .catch((error) => console.error('Error fetching user data:', error));
         }
     }, [userId]);
+
+    // Function to delete user profile
+    const handleDeleteProfile = () => {
+        if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+            fetch(`/users/${userId}`, {
+                method: 'DELETE',
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        // Redirect to homepage or login page after deletion
+                        window.location.href = '/';
+                    } else {
+                        console.error('Error deleting profile:', response.statusText);
+                    }
+                })
+                .catch((error) => console.error('Error deleting profile:', error));
+        }
+    };
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <main className="profilePage">
             {/* Pass the playlists to Sidebar */}
-            <Sidebar playlists={playlists} setPlaylists={setPlaylists} />
+            <Sidebar playlists={user.playlists} />
 
             <section className="mainContent">
-                <ProfileInfo />
-                <ProfileForm />
+                {/* Pass user data to ProfileInfo and ProfileForm */}
+                <ProfileInfo user={user} />
+                <ProfileForm user={user} setUser={setUser} />
+
+                {/* Add a button to delete the profile */}
+                <button onClick={handleDeleteProfile} className="deleteProfileButton">
+                    Delete Profile
+                </button>
             </section>
 
             <img

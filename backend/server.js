@@ -26,9 +26,9 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
-    followers: [mongoose.Schema.Types.ObjectId],
-    following: [mongoose.Schema.Types.ObjectId],
-    playlists: [mongoose.Schema.Types.ObjectId],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    playlists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
@@ -68,6 +68,7 @@ const Playlist = mongoose.model('Playlist', playlistSchema);
 const Song = mongoose.model('Song', songSchema);
 const Comment = mongoose.model('Comment', commentSchema);
 
+// Authentication API Requests (Login, Signup, Logout)
 app.post('/signup', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -100,7 +101,6 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-//login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -126,30 +126,129 @@ app.post('/login', async (req, res) => {
     res.status(200).json(user); // This sends back the user object, including the user ID
 });
 
+// Since we're not using sessions or tokens, logout can be handled client-side by deleting stored credentials.
 
+// Profile API Requests (View, Edit, View someone else's, Delete your profile)
+app.get('/users/:userId', async (req, res) => {
+    const { userId } = req.params;
 
-app.get('/playlists', async (req, res) => {
     try {
-        const playlists = await Playlist.find().populate('userId', 'username').populate('songs').populate('comments');
-        res.status(200).json(playlists);
+        const user = await User.findById(userId)
+            .populate('followers', 'username')
+            .populate('following', 'username')
+            .populate('playlists', 'name');
+
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching playlists.' });
+        res.status(500).send('Error fetching user profile.');
     }
 });
 
-//search a playlist from the database through the name
-app.get('/playlists/search', async (req, res) => {
-    const { name } = req.query;
+app.put('/users/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { username, email, password } = req.body;
 
     try {
-        const playlists = await Playlist.find({ name: { $regex: name, $options: 'i' } });
-        res.status(200).json(playlists);
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        // Update fields if they are provided
+        if (username) user.username = username;
+        if (email) user.email = email;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.passwordHash = await bcrypt.hash(password, salt);
+        }
+
+        user.updatedAt = Date.now();
+
+        await user.save();
+
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching playlists.' });
+        res.status(500).send('Error updating user profile.');
     }
 });
 
+app.delete('/users/:userId', async (req, res) => {
+    const { userId } = req.params;
 
+    try {
+        await User.findByIdAndDelete(userId);
+        res.status(200).send('User deleted successfully.');
+    } catch (error) {
+        res.status(500).send('Error deleting user profile.');
+    }
+});
+
+// Friend / Unfriend API Requests
+app.post('/users/:userId/follow', async (req, res) => {
+    const { userId } = req.params;
+    const { followerId } = req.body;
+
+    try {
+        const userToFollow = await User.findById(userId);
+        const follower = await User.findById(followerId);
+
+        if (!userToFollow || !follower) {
+            return res.status(404).send('User not found.');
+        }
+
+        if (userToFollow.followers.includes(followerId)) {
+            return res.status(400).send('Already following this user.');
+        }
+
+        userToFollow.followers.push(followerId);
+        follower.following.push(userId);
+
+        await userToFollow.save();
+        await follower.save();
+
+        res.status(200).send('User followed successfully.');
+    } catch (error) {
+        res.status(500).send('Error following user.');
+    }
+});
+
+app.post('/users/:userId/unfollow', async (req, res) => {
+    const { userId } = req.params;
+    const { followerId } = req.body;
+
+    try {
+        const userToUnfollow = await User.findById(userId);
+        const follower = await User.findById(followerId);
+
+        if (!userToUnfollow || !follower) {
+            return res.status(404).send('User not found.');
+        }
+
+        const followerIndex = userToUnfollow.followers.indexOf(followerId);
+        const followingIndex = follower.following.indexOf(userId);
+
+        if (followerIndex === -1 || followingIndex === -1) {
+            return res.status(400).send('Not following this user.');
+        }
+
+        userToUnfollow.followers.splice(followerIndex, 1);
+        follower.following.splice(followingIndex, 1);
+
+        await userToUnfollow.save();
+        await follower.save();
+
+        res.status(200).send('User unfollowed successfully.');
+    } catch (error) {
+        res.status(500).send('Error unfollowing user.');
+    }
+});
+
+// Your Playlist API Requests (Create, Add songs, View, Edit, Delete)
 app.post('/playlists', async (req, res) => {
     const { name, description, userId } = req.body;
 
@@ -188,10 +287,209 @@ app.post('/playlists', async (req, res) => {
     }
 });
 
+app.get('/playlists/:playlistId', async (req, res) => {
+    const { playlistId } = req.params;
+
+    try {
+        const playlist = await Playlist.findById(playlistId)
+            .populate('userId', 'username')
+            .populate('songs')
+            .populate({
+                path: 'comments',
+                populate: { path: 'userId', select: 'username' }
+            });
+
+        if (!playlist) {
+            return res.status(404).send('Playlist not found.');
+        }
+
+        res.status(200).json(playlist);
+    } catch (error) {
+        res.status(500).send('Error fetching playlist.');
+    }
+});
+
+app.put('/playlists/:playlistId', async (req, res) => {
+    const { playlistId } = req.params;
+    const { name, description } = req.body;
+
+    try {
+        const playlist = await Playlist.findById(playlistId);
+
+        if (!playlist) {
+            return res.status(404).send('Playlist not found.');
+        }
+
+        if (name) playlist.name = name;
+        if (description) playlist.description = description;
+
+        playlist.updatedAt = Date.now();
+
+        await playlist.save();
+
+        res.status(200).json(playlist);
+    } catch (error) {
+        res.status(500).send('Error updating playlist.');
+    }
+});
+
+app.delete('/playlists/:playlistId', async (req, res) => {
+    const { playlistId } = req.params;
+    const { userId } = req.body; // Assume that userId is sent in the request body
+
+    try {
+        const playlist = await Playlist.findById(playlistId);
+
+        if (!playlist) {
+            return res.status(404).send('Playlist not found.');
+        }
+
+        // Check if the user is the owner of the playlist
+        if (playlist.userId.toString() !== userId) {
+            return res.status(403).send('You are not authorized to delete this playlist.');
+        }
+
+        // Remove playlist from user's playlists array
+        const user = await User.findById(userId);
+        const playlistIndex = user.playlists.indexOf(playlistId);
+        if (playlistIndex !== -1) {
+            user.playlists.splice(playlistIndex, 1);
+            await user.save();
+        }
+
+        // Delete the playlist
+        await Playlist.findByIdAndDelete(playlistId);
+
+        res.status(200).send('Playlist deleted successfully.');
+    } catch (error) {
+        res.status(500).send('Error deleting playlist.');
+    }
+});
+
+app.post('/playlists/:playlistId/songs', async (req, res) => {
+    const { playlistId } = req.params;
+    const { songId } = req.body;
+
+    console.log('Received songId:', songId); // Debug log
+
+    if (!songId) {
+        return res.status(400).send('Song ID is required.');
+    }
+
+    try {
+        const playlist = await Playlist.findById(playlistId);
+        if (!playlist) {
+            return res.status(404).send('Playlist not found.');
+        }
+
+        const song = await Song.findById(songId);
+        if (!song) {
+            return res.status(404).send('Song not found.');
+        }
+
+        playlist.songs.push(song._id);
+        await playlist.save();
+
+        res.status(200).json({ message: 'Song added to playlist successfully.', playlist });
+    } catch (error) {
+        console.error('Error adding song:', error); // Error log
+        res.status(500).send('Error adding song to playlist.');
+    }
+});
+
+
+// Songs API Requests (Create song, Delete song)
+app.post('/songs', async (req, res) => {
+    const { title, albumCover, artist, album, dateAdded, duration } = req.body;
+
+    if (!title || !artist) {
+        return res.status(400).send('Title and artist are required.');
+    }
+
+    try {
+        const newSong = new Song({
+            title,
+            albumCover,
+            artist,
+            album,
+            dateAdded,
+            duration
+        });
+
+        await newSong.save();
+
+        res.status(201).json(newSong);
+    } catch (error) {
+        res.status(500).send('Error creating song.');
+    }
+});
+
+app.delete('/songs/:songId', async (req, res) => {
+    const { songId } = req.params;
+
+    try {
+        // Remove song from all playlists
+        await Playlist.updateMany(
+            { songs: songId },
+            { $pull: { songs: songId } }
+        );
+
+        // Delete the song
+        await Song.findByIdAndDelete(songId);
+
+        res.status(200).send('Song deleted successfully.');
+    } catch (error) {
+        res.status(500).send('Error deleting song.');
+    }
+});
+
+
+// Search songs
+app.get('/songs/search', async (req, res) => {
+    const { title } = req.query;
+
+    try {
+        const songs = await Song.find({ title: { $regex: title, $options: 'i' } });
+        res.status(200).json(songs);
+    } catch (error) {
+        res.status(500).json({ error: 'Error searching songs.' });
+    }
+});
+
+// Search users
+app.get('/users/search', async (req, res) => {
+    const { username } = req.query;
+
+    try {
+        const users = await User.find({ username: { $regex: username, $options: 'i' } }).select('username email');
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Error searching users.' });
+    }
+});
+
+app.get('/playlists', async (req, res) => {
+    const searchQuery = req.query.search;
+    try {
+        const playlists = await Playlist.find(
+            searchQuery
+                ? { name: { $regex: searchQuery, $options: 'i' } }
+                : {}
+        )
+            .populate('userId', 'username') // Populate creator's username
+            .populate('songs')
+            .populate('comments');
+        res.status(200).json(playlists);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching playlists.' });
+    }
+});
+
+
+
 app.get('/playlists/:playlistId/songs', async (req, res) => {
     const { playlistId } = req.params;
 
-    // 打印 playlistId 确认
     console.log('Fetching songs for playlistId:', playlistId);
 
     try {
@@ -207,7 +505,6 @@ app.get('/playlists/:playlistId/songs', async (req, res) => {
     }
 });
 
-//delete song from playlist
 app.delete('/playlists/:playlistId/songs/:songId', async (req, res) => {
     const { playlistId, songId } = req.params;
 
@@ -229,9 +526,7 @@ app.delete('/playlists/:playlistId/songs/:songId', async (req, res) => {
     } catch (error) {
         res.status(500).send('Error deleting song.');
     }
-
 });
-
 
 app.get('/playlists/:playlistId/comments', async (req, res) => {
     const { playlistId } = req.params;
@@ -277,48 +572,23 @@ app.post('/playlists/:playlistId/comments', async (req, res) => {
     }
 });
 
-//fetch songs
+// Fetch songs
 app.get('/songs', async (req, res) => {
+    const searchQuery = req.query.search; // Get the search query from the URL params
     try {
-        const songs = await Song.find();
+        const songs = await Song.find(
+            searchQuery
+                ? { name: { $regex: searchQuery, $options: 'i' } } // Search by song name
+                : {}
+        );
         res.status(200).json(songs);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching songs.' });
     }
 });
 
-// Add a song to a playlist
-app.post('/playlists/:playlistId/songs', async (req, res) => {
-    const { playlistId } = req.params;
-    const { songId } = req.body;
 
-    console.log('Received songId:', songId); // 调试日志
-
-    if (!songId) {
-        return res.status(400).send('Song ID is required.');
-    }
-
-    try {
-        const playlist = await Playlist.findById(playlistId);
-        if (!playlist) {
-            return res.status(404).send('Playlist not found.');
-        }
-
-        const song = await Song.findById(songId);
-        if (!song) {
-            return res.status(404).send('Song not found.');
-        }
-
-        playlist.songs.push(song._id);
-        await playlist.save();
-
-        res.status(200).json({ message: 'Song added to playlist successfully.', playlist });
-    } catch (error) {
-        console.error('Error adding song:', error); // 捕获错误信息
-        res.status(500).send('Error adding song to playlist.');
-    }
-});
-
+// Add a playlist to a user (already implemented)
 app.post('/users/:userId/playlists', async (req, res) => {
     const { userId } = req.params;
     const { playlistId } = req.body;
@@ -335,20 +605,18 @@ app.post('/users/:userId/playlists', async (req, res) => {
         }
 
         const playlist = await Playlist.findById(playlistId);
-        res.status(200).json(playlist);  // 返回更新后的播放列表
+        res.status(200).json(playlist);  // Return the playlist
     } catch (error) {
         res.status(500).send('Error adding playlist to user.');
     }
 });
 
+//fetch all songs from the database
 
-
-
-
+// Serve frontend
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/public/index.html'));
 });
-
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

@@ -6,6 +6,7 @@ import SignUpForm from "./pages/SignUpPage/SignUpForm";
 import HomePage from './pages/HomePage/SportifyClone';
 import PlaylistPage from './pages/PlaylistPage/PlaylistPage';
 import ProfilePage  from "./pages/ProfilePage/ProfilePage";
+import SearchPage from "./pages/SearchPage/SearchPage";
 
 const container = document.getElementById('root');
 const root = createRoot(container);  // This is new in React 19
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/playlist/:playlistId" element={<PlaylistPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/search" element={<SearchPage />} />
                 {/* Add other routes here */}
             </Routes>
         </Router>

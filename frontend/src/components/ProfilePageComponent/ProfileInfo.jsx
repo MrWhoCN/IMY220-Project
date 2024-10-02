@@ -1,24 +1,15 @@
 import React from 'react';
 import './ProfileInfo.css';
 
-function ProfileInfo() {
+function ProfileInfo({ user }) {
     return (
-        <section className="profileInfo">
-            <div className="profileHeader">
-                <div className="avatarContainer">
-                    <div className="avatar" />
-                </div>
-                <div className="userInfo">
-                    <h1 className="userName">Mr. Who?</h1>
-                    <p className="userEmail">JohnDoe@gmail.com</p>
-                </div>
-            </div>
-            <div className="stats">
-                <p className="followers">Followers: 199</p>
-                <p className="following">Following: 199</p>
-            </div>
-        </section>
+        <div className="profileInfo">
+            <h1>{user.username}'s Profile</h1>
+            <p>Followers: {user.followers.length}</p>
+            <p>Following: {user.following.length}</p>
+        </div>
     );
 }
+
 
 export default ProfileInfo;

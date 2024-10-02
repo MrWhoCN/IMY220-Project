@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SidebarComponent/Sidebar';
 import PlaylistSection from '../../components/HomePageComponent/PlaylistSection';
-import SearchBar from '../../components/HomePageComponent/SearchBar';
 import './css/SpotifyClone.css';
 
 function SpotifyClone() {
@@ -13,7 +12,6 @@ function SpotifyClone() {
             try {
                 const response = await fetch('/songs');
                 const data = await response.json();
-                // Transform the fetched songs into playlist data
                 const playlistData = data.map((song) => ({
                     songId: song._id,
                     image: song.albumCover,
@@ -29,16 +27,9 @@ function SpotifyClone() {
             }
         };
 
-        fetchSongs();
+        fetchSongs().then(r => console.log('Songs fetched:', r));
     }, []);
 
-    const handleSearch = (query) => {
-        const filtered = playlists.filter(playlist =>
-            playlist.title.toLowerCase().includes(query.toLowerCase()) ||
-            playlist.description.toLowerCase().includes(query.toLowerCase())
-        );
-        setFilteredPlaylists(filtered);
-    };
 
     // 添加处理添加歌曲到播放列表的逻辑
     const handleAddSongClick = (songId) => {
@@ -50,12 +41,11 @@ function SpotifyClone() {
         <div className="container">
             <Sidebar playlists={playlists} setPlaylists={setPlaylists} />
             <main className="mainContent">
-                <SearchBar onSearch={handleSearch} />
                 <PlaylistSection
                     title="Suggestion & Top Hits"
                     subtitle="Focus & Top Charts"
                     playlists={filteredPlaylists}
-                    onAddSong={handleAddSongClick} // 传递 handleAddSongClick 回调函数
+                    onAddSong={handleAddSongClick}
                 />
             </main>
         </div>

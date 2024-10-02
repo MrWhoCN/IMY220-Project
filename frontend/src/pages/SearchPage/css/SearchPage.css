@@ -1,0 +1,54 @@
+/* SearchPage.css */
+
+.container {
+    display: flex;
+}
+
+.searchPage {
+    flex: 1;
+    padding: 20px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.searchResults {
+    margin-top: 20px;
+}
+
+.searchResults h2 {
+    margin-bottom: 10px;
+}
+
+.searchResults ul {
+    list-style: none;
+    padding: 0;
+}
+
+.playlistItem, .songItem {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.playlistItem h3, .songItem h3 {
+    margin: 0;
+}
+
+.playlistItem p {
+    margin: 5px 0;
+}
+
+.addButton {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.addButton:hover {
+    background-color: #0056b3;
+}
