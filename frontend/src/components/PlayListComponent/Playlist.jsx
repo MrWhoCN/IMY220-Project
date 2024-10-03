@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlaylistHeader from './PlaylistHeader';
 import PlaylistItem from './PlaylistItem';
 import CommentsSection from '../CommentComponent/CommentSection'; // 确保路径正确
-import './Playlist.css';
+
 
 const Playlist = ({ playlistId, searchQuery, addSongToPlaylist }) => {
     const [playlistData, setPlaylistData] = useState([]); // Initially empty
@@ -72,28 +72,39 @@ const Playlist = ({ playlistId, searchQuery, addSongToPlaylist }) => {
     };
 
     return (
-        <section className="playlistSection">
-            <div className="playlistName">
+        <section className="p-6 bg-white rounded-lg shadow-md">
+            <div className="mb-6">
                 {isEditingName ? (
-                    <div>
+                    <div className="flex items-center space-x-4">
                         <input
                             type="text"
                             value={playlistName}
                             onChange={handleNameChange}
-                            className="playlistNameInput"
+                            className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                         />
-                        <button onClick={handleSaveName} className="saveButton">Save</button>
+                        <button
+                            onClick={handleSaveName}
+                            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                        >
+                            Save
+                        </button>
                     </div>
                 ) : (
-                    <div>
-                        <h2>{playlistName}</h2>
-                        <button onClick={handleEditPlaylistName} className="editButton">Edit Name</button>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold text-gray-800">{playlistName}</h2>
+                        <button
+                            onClick={handleEditPlaylistName}
+                            className="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                        >
+                            Edit Name
+                        </button>
                     </div>
                 )}
             </div>
 
             <PlaylistHeader />
-            <div className="playlistItems">
+
+            <div className="mt-6">
                 {filteredPlaylistData.length > 0 ? (
                     filteredPlaylistData.map((item, index) => (
                         <PlaylistItem
@@ -103,11 +114,11 @@ const Playlist = ({ playlistId, searchQuery, addSongToPlaylist }) => {
                         />
                     ))
                 ) : (
-                    <div className="noResultsMessage">No songs match your search.</div>
+                    <div className="text-gray-500 text-center">No songs match your search.</div>
                 )}
             </div>
 
-            {/* 传递 playlistId 到 CommentsSection */}
+            {/* Pass playlistId to CommentsSection */}
             <CommentsSection playlistId={playlistId} />
         </section>
     );

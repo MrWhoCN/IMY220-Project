@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/SidebarComponent/Sidebar';
 import Playlist from '../../components/PlayListComponent/Playlist';
-import './css/PlaylistPage.css';
 import Cookies from 'js-cookie';
 
 const PlaylistPage = () => {
@@ -205,99 +204,119 @@ const PlaylistPage = () => {
     };
 
     return (
-        <div className="playlistPage">
+        <div className="flex min-h-screen bg-gray-100">
             <Sidebar playlists={playlists} setPlaylists={setPlaylists} />
-            <main className="mainContent">
+            <main className="flex-1 p-6">
                 {error ? (
-                    <div className="error">{error}</div>
+                    <div className="text-red-500 text-center mb-4">{error}</div>
                 ) : (
                     playlist &&
                     creator && (
                         <>
-                            <h2>{playlist.name}</h2>
-                            <p>Created by: {creator.username}</p>
-                            {/* Show Follow/Unfollow button if the creator is not the current user */}
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">{playlist.name}</h2>
+                            <p className="text-gray-600 mb-4">Created by: {creator.username}</p>
                             {creator._id !== userId && (
-                                <button onClick={handleFollowClick} className="followButton">
+                                <button
+                                    onClick={handleFollowClick}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 mb-4"
+                                >
                                     {isFollowing ? 'Unfollow' : 'Follow'} {creator.username}
                                 </button>
                             )}
                             <Playlist searchQuery="" playlistId={playlist._id} songs={playlist.songs} />
-                            <div className="buttonContainer">
-                                <button className="addSongButton" onClick={handleAddSongClick}>
+                            <div className="flex space-x-4 mt-6">
+                                <button
+                                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
+                                    onClick={handleAddSongClick}
+                                >
                                     Add Song
                                 </button>
-                                <button className="deleteButton" onClick={handleDeletePlaylist}>
+                                <button
+                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                                    onClick={handleDeletePlaylist}
+                                >
                                     Delete Playlist
                                 </button>
                             </div>
                             {isAddSongFormOpen && (
-                                <form className="addSongForm" onSubmit={handleAddSongSubmit}>
-                                    <h3>Add New Song</h3>
-                                    {errorMessage && <div className="error">{errorMessage}</div>}
-                                    <div className="formGroup">
-                                        <label>Title*</label>
+                                <form
+                                    className="mt-6 bg-white p-6 rounded-lg shadow-md"
+                                    onSubmit={handleAddSongSubmit}
+                                >
+                                    <h3 className="text-xl font-bold mb-4">Add New Song</h3>
+                                    {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Title*</label>
                                         <input
                                             type="text"
                                             name="title"
                                             value={newSong.title}
                                             onChange={handleInputChange}
                                             required
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formGroup">
-                                        <label>Artist*</label>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Artist*</label>
                                         <input
                                             type="text"
                                             name="artist"
                                             value={newSong.artist}
                                             onChange={handleInputChange}
                                             required
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formGroup">
-                                        <label>Album</label>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Album</label>
                                         <input
                                             type="text"
                                             name="album"
                                             value={newSong.album}
                                             onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formGroup">
-                                        <label>Album Cover URL</label>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Album Cover URL</label>
                                         <input
                                             type="text"
                                             name="albumCover"
                                             value={newSong.albumCover}
                                             onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formGroup">
-                                        <label>Date Added</label>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Date Added</label>
                                         <input
                                             type="date"
                                             name="dateAdded"
                                             value={newSong.dateAdded}
                                             onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formGroup">
-                                        <label>Duration</label>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 mb-2">Duration</label>
                                         <input
                                             type="text"
                                             name="duration"
                                             value={newSong.duration}
                                             onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <div className="formButtons">
-                                        <button type="submit" className="submitButton">
+                                    <div className="flex space-x-4">
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                                        >
                                             Add Song
                                         </button>
                                         <button
                                             type="button"
-                                            className="cancelButton"
+                                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
                                             onClick={() => setIsAddSongFormOpen(false)}
                                         >
                                             Cancel
@@ -311,6 +330,7 @@ const PlaylistPage = () => {
             </main>
         </div>
     );
+
 };
 
 export default PlaylistPage;

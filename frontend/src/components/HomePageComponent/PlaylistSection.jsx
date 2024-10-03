@@ -1,22 +1,21 @@
 import React from 'react';
 import PlaylistCard from './PlaylistCard';
-import '../../pages/HomePage/css/SpotifyClone.css';
 
-const PlaylistSection = ({ title, subtitle, playlists, onAddSong }) => ( // 这里解构 onAddSong
-    <section className="sectionContainer">
-        <div className="sectionHeader">
-            <h2 className="sectionTitle">{title}</h2>
-            <div className="sectionSubtitle">{subtitle}</div>
+const PlaylistSection = ({ title, subtitle, playlists, onAddSong }) => (
+    <section className="mb-8">
+        <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+            <div className="text-gray-500 text-sm">{subtitle}</div>
         </div>
-        <div className="playlistGrid">
-            {playlists.map((playlist, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {playlists.map((playlist) => (
                 <PlaylistCard
-                    key={playlist.songId} // 确保 songId 作为唯一键
+                    key={playlist.songId}
                     image={playlist.image}
                     title={playlist.title}
                     description={playlist.description}
-                    songId={playlist.songId} // 传递 songId
-                    onAddSong={onAddSong} // 传递 onAddSong
+                    songId={playlist.songId}
+                    onAddSong={onAddSong}
                 />
             ))}
         </div>

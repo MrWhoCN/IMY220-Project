@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
-import './CommentsSection.css';
+import Cookies from 'js-cookie';
+
 
 const CommentsSection = ({ playlistId }) => {
     const [comments, setComments] = useState([]);
@@ -52,30 +52,37 @@ const CommentsSection = ({ playlistId }) => {
     };
 
     return (
-        <div className="commentSection">
-            <h3>Comments</h3>
-            <div className="commentInput">
+        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Comments</h3>
+            <div className="flex items-center space-x-4 mb-6">
                 <input
                     type="text"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Leave a comment..."
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button onClick={handleAddComment}>Submit</button>
+                <button
+                    onClick={handleAddComment}
+                    className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                >
+                    Submit
+                </button>
             </div>
-            <div className="commentsList">
+            <div>
                 {comments.length > 0 ? (
                     comments.map((comment, index) => (
-                        <div key={index} className="commentItem">
-                            <strong>{comment.userId.username}</strong>: {comment.content}
+                        <div key={index} className="mb-4">
+                            <strong className="font-semibold text-gray-700">{comment.userId.username}</strong>: {comment.content}
                         </div>
                     ))
                 ) : (
-                    <div className="noCommentsMessage">No comments yet. Be the first to comment!</div>
+                    <div className="text-gray-500">No comments yet. Be the first to comment!</div>
                 )}
             </div>
         </div>
     );
+
 };
 
 export default CommentsSection;

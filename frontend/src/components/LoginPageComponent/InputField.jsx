@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
-import './InputField.css';
+import React from 'react';
 
 function InputField({ label, placeholder, type = 'text', value, onChange, error }) {
     return (
-        <div className="inputWrapper">
-            <label className="inputLabel">{label}</label>
+        <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">
+                {label}
+            </label>
             <input
                 type={type}
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className={`inputField ${error ? 'inputError' : ''}`} // Add error class if validation fails
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    error ? 'border-red-500' : 'border-gray-300'
+                }`}
                 aria-label={label}
-                aria-invalid={error ? 'true' : 'false'} // Accessibility improvement
+                aria-invalid={error ? 'true' : 'false'}
             />
-            {error && <span className="errorMessage">{error}</span>} {/* Display error message if present */}
+            {error && (
+                <span className="text-red-500 text-sm mt-1">
+                    {error}
+                </span>
+            )}
         </div>
     );
 }

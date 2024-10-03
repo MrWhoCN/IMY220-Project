@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import '../../pages/HomePage/css/SpotifyClone.css';
 import Modal from 'react-modal';
 import Cookies from "js-cookie";
 
 const PlaylistCard = ({ image, title, description, songId }) => {
     const [playlists, setPlaylists] = useState([]);
-    const [showPlaylists, setShowPlaylists] = useState(false);  // 控制是否显示播放列表
+    const [showPlaylists, setShowPlaylists] = useState(false);
     const [message, setMessage] = useState('');
-    const [modalOpen, setModalOpen] = useState(false);  // 控制 Modal 显示
+    const [modalOpen, setModalOpen] = useState(false);
 
-    // Fetch 用户的播放列表
+    // Fetch user's playlists
     useEffect(() => {
         fetch('/playlists')
             .then((response) => response.json())
@@ -17,19 +16,16 @@ const PlaylistCard = ({ image, title, description, songId }) => {
             .catch((error) => console.error('Error fetching playlists:', error));
     }, []);
 
-    // 点击 "Add" 按钮，显示可选播放列表
     const handleAddClick = () => {
         if (playlists.length > 0) {
-            setShowPlaylists(true);  // 打开播放列表选择
-            setModalOpen(true);  // 打开 Modal
+            setShowPlaylists(true);
+            setModalOpen(true);
         } else {
             setMessage('No playlists available. Please create a playlist first.');
         }
     };
 
-    // 添加歌曲到选定的播放列表
     const handleAddSongToPlaylist = async (playlistId) => {
-        console.log('Adding songId:', songId);  // 打印 songId，确保它不是 undefined
         const userId = Cookies.get('userId');
         if (!userId) {
             setMessage('User ID not found in cookies.');
@@ -42,7 +38,7 @@ const PlaylistCard = ({ image, title, description, songId }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ songId })  // 传递 songId
+                body: JSON.stringify({ songId })
             });
 
             if (response.ok) {
@@ -56,37 +52,49 @@ const PlaylistCard = ({ image, title, description, songId }) => {
             console.error('Error adding song to playlist:', error);
             setMessage('Failed to add song.');
         }
-        setModalOpen(false);  // 添加后关闭 modal
+        setModalOpen(false);
     };
 
     return (
-        <div className="playlistCard">
-            <img loading="lazy" src={image} alt={title} className="playlistImage" />
-            <div className="playlistInfo">
-                <div className="playlistTitles">{title}</div>
-                <div className="playlistDescription">{description}</div>
+        <div className="bg-white p-4 rounded-lg shadow-lg text-white">
+            <img loading="lazy" src={image} alt={title} className="w-full h-40 object-cover rounded" />
+            <div className="mt-4">
+                <h3 className="text-lg font-semibold">{title}</h3>
+                <p className="text-gray-400 text-sm">{description}</p>
             </div>
-            <button className="addButton" onClick={handleAddClick}>Add</button>
-            {message && <div className="message">{message}</div>}
+            <button className="mt-4 bg-orange-400 hover:bg-orange-400-600 text-white font-bold py-2 px-4 rounded" onClick={handleAddClick}>
+                Add
+            </button>
+            {message && <div className="mt-2 text-red-500">{message}</div>}
 
-            {/* 显示选择播放列表的 Modal */}
+            {/* Display Modal for selecting playlist */}
             {modalOpen && (
                 <Modal
                     isOpen={modalOpen}
-                    onRequestClose={() => setModalOpen(false)}  // 允许点击外部关闭 Modal
+                    onRequestClose={() => setModalOpen(false)}
                     contentLabel="Select a Playlist"
+                    className="fixed inset-0 flex items-center justify-center"
+                    overlayClassName="fixed inset-0 bg-black bg-opacity-75"
                 >
-                    <h2>Select a Playlist</h2>
-                    {playlists.length > 0 ? (
-                        playlists.map((playlist) => (
-                            <button key={playlist._id} onClick={() => handleAddSongToPlaylist(playlist._id)}>
-                                {playlist.name}
-                            </button>
-                        ))
-                    ) : (
-                        <p>No playlists available</p>
-                    )}
-                    <button onClick={() => setModalOpen(false)}>Cancel</button>
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-2xl font-bold mb-4">Select a Playlist</h2>
+                        {playlists.length > 0 ? (
+                            playlists.map((playlist) => (
+                                <button
+                                    key={playlist._id}
+                                    onClick={() => handleAddSongToPlaylist(playlist._id)}
+                                    className="block w-full text-left bg-amber-300 hover:bg-orange-400-300 text-gray-800 font-semibold py-2 px-4 rounded mb-2"
+                                >
+                                    {playlist.name}
+                                </button>
+                            ))
+                        ) : (
+                            <p>No playlists available</p>
+                        )}
+                        <button onClick={() => setModalOpen(false)} className="mt-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">
+                            Cancel
+                        </button>
+                    </div>
                 </Modal>
             )}
         </div>
