@@ -280,7 +280,17 @@ app.post('/users/:userId/unfollow', async (req, res) => {
         res.status(500).send('Error unfollowing user.');
     }
 });
+//get playlist by user id
+app.get('/users/:userId/playlists', async (req, res) => {
+    const { userId } = req.params;
 
+    try {
+        const playlists = await Playlist.find({ userId }).populate('songs');
+        res.status(200).json(playlists);
+    } catch (error) {
+        res.status(500).send('Error fetching user playlists.');
+    }
+});
 // Your Playlist API Requests (Create, Add songs, View, Edit, Delete)
 app.post('/playlists', async (req, res) => {
     const { name, description, userId } = req.body;
@@ -427,6 +437,28 @@ app.post('/playlists/:playlistId/songs', async (req, res) => {
     } catch (error) {
         console.error('Error adding song:', error); // Error log
         res.status(500).send('Error adding song to playlist.');
+    }
+});
+
+//fetch all songs from the database
+app.get('/songs', async (req, res) => {
+    const { search } = req.query;
+    try {
+        let query = {};
+        if (search) {
+            // This will search for songs that match the search query in the 'title' or 'artist' fields
+            query = {
+                $or: [
+                    { title: { $regex: search, $options: 'i' } },  // Case-insensitive search for song title
+                    { artist: { $regex: search, $options: 'i' } }  // Case-insensitive search for artist
+                ]
+            };
+        }
+
+        const songs = await Song.find(query);
+        res.status(200).json(songs);
+    } catch (error) {
+        res.status(500).send('Error fetching songs.');
     }
 });
 

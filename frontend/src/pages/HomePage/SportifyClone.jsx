@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SidebarComponent/Sidebar';
 import PlaylistSection from '../../components/HomePageComponent/PlaylistSection';
-import './css/SpotifyClone.css';
 
 function SpotifyClone() {
     const [playlists, setPlaylists] = useState([]);
@@ -38,9 +37,9 @@ function SpotifyClone() {
     };
 
     return (
-        <div className="container">
+        <div className="flex">
             <Sidebar playlists={playlists} setPlaylists={setPlaylists} />
-            <main className="mainContent">
+            <main className="flex-1 p-6 bg-gray-100">
                 <PlaylistSection
                     title="Suggestion & Top Hits"
                     subtitle="Focus & Top Charts"
@@ -51,5 +50,4 @@ function SpotifyClone() {
         </div>
     );
 }
-
 export default SpotifyClone;
