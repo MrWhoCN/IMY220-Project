@@ -1,11 +1,16 @@
 import React from 'react';
-import './CheckboxField.css'; // Import the CSS file without assigning to `styles`
 
 function CheckboxField({ label }) {
     return (
-        <div className="checkboxWrapper"> {/* Use the class name as a string */}
-            <input type="checkbox" id="rememberMe" className="checkbox" />
-            <label htmlFor="rememberMe" className="checkboxLabel">
+        <div className="flex items-center space-x-2"> {/* Flexbox for alignment */}
+            <input
+                type="checkbox"
+                id="rememberMe"
+                className="form-checkbox h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label
+                htmlFor="rememberMe"
+                className="text-gray-700">
                 {label}
             </label>
         </div>
